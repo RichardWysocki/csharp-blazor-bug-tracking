@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BugTrackerUI.Services;
+using Lamar;
 
 namespace BugTrackerUI
 {
@@ -29,8 +30,19 @@ namespace BugTrackerUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddSingleton<IBugService, BugService>();
+            //services.AddSingleton<IBugService, BugService>();
 
+        }
+
+        public void ConfigureContainer(ServiceRegistry services)
+        {
+            services.ForSingletonOf<IBugService>().Use<BugService>();
+
+            services.Scan(s =>
+            {
+                s.TheCallingAssembly();
+                s.WithDefaultConventions();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
